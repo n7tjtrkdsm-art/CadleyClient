@@ -1,0 +1,739 @@
+# MASTER PROMPT — PURXIY-INSPIRED MINECRAFT CLIENT
+
+## PROJECT OBJECTIVE
+
+Act as a senior Minecraft client developer, Java engineer, Fabric modding specialist, UI/UX designer, graphics programmer, and software quality engineer.
+
+Build a polished, modular, Purxiy-inspired Minecraft client with a distinctive interface, advanced customization, smooth animations, combat and player-awareness utilities, world-rendering effects, cosmetics, HUD components, configuration management, and reliable performance.
+
+The objective is to create an original, production-quality client inspired by the design language and feature categories of modern Minecraft clients, not to copy proprietary source code or assets.
+
+The result must be a working software project, not merely a mockup, concept, or collection of disconnected code snippets.
+
+## 1. PROJECT ARCHITECTURE AND TECHNOLOGY
+
+Use a maintainable, modular architecture.
+
+- Language: Java.
+- Mod loader: Fabric.
+- Build system: Gradle with the Fabric Loom plugin.
+- Rendering: Minecraft's supported rendering APIs, with appropriate compatibility abstractions.
+- Interface: A custom ClickGUI with reusable components.
+- Configuration: Validated JSON or another suitable structured format.
+- Versioning: Explicitly define the supported Minecraft version, Java version, Fabric Loader version, Fabric API version, and compatible rendering dependencies before implementation.
+- Dependencies: Pin compatible versions where practical and document all required dependencies.
+
+Organize the project into clearly separated packages for:
+
+1. Client initialization.
+2. Module registration and lifecycle.
+3. Settings and configuration.
+4. ClickGUI and interface components.
+5. HUD and overlays.
+6. Rendering and visual effects.
+7. Combat utilities.
+8. Player awareness.
+9. World information.
+10. Cosmetics.
+11. External integrations.
+12. Input handling and keybinds.
+13. Resource management.
+14. Logging, diagnostics, and testing.
+
+Avoid monolithic classes, duplicated logic, unnecessary mixins, and undocumented global state.
+
+Use mixins only when necessary and keep them narrowly scoped. Follow the target Minecraft version's supported APIs and conventions.
+
+## 2. MODULE SYSTEM
+
+Implement a functional, extensible module framework.
+
+Every module must support:
+
+- A unique identifier and display name.
+- A category.
+- An enabled or disabled state.
+- A configurable keybind.
+- Typed settings.
+- A description.
+- Lifecycle callbacks.
+- Proper resource cleanup.
+- Configuration persistence.
+- GUI integration.
+- Error handling and diagnostic logging.
+
+Suggested categories:
+
+- Combat
+- Player
+- Movement
+- Render
+- World
+- HUD
+- Utility
+- Cosmetics
+- Miscellaneous
+
+Create a reusable module base class and centralized module registry.
+
+Modules must register exactly once. Duplicate identifiers must be detected and rejected or reported clearly.
+
+Disabling a module must restore any temporary state it modified and release any resources it owns.
+
+Disabled modules should perform no unnecessary per-tick or per-frame work.
+
+Provide consistent APIs for registering modules, querying their state, accessing settings, and responding to lifecycle events.
+
+## 3. CLICKGUI AND INTERFACE DESIGN
+
+Build a polished, modern ClickGUI inspired by contemporary Minecraft clients.
+
+The interface should feel cohesive, responsive, and professionally designed.
+
+### Visual design
+
+- Dark, configurable backgrounds.
+- Subtle accent colors.
+- Rounded panels where appropriate.
+- Consistent spacing and alignment.
+- Smooth opening and closing animations.
+- Clean typography and readable labels.
+- Carefully designed hover, focus, and selected states.
+- Subtle shadows and transparency.
+- Consistent iconography.
+- Smooth scrolling and category navigation.
+
+Avoid excessive gradients, visual clutter, oversized controls, and distracting animations.
+
+### Main interface
+
+Include:
+
+- Category navigation.
+- Module lists.
+- Module search.
+- Enable and disable controls.
+- Expandable setting panels.
+- Boolean toggles.
+- Numeric sliders.
+- Dropdowns.
+- Color pickers.
+- Keybind editors.
+- Text inputs.
+- Reset-to-default controls.
+- Tooltips and descriptions.
+- Configuration management.
+- A settings or preferences screen.
+
+### Interaction requirements
+
+The GUI must support:
+
+- Mouse clicks.
+- Keyboard navigation where practical.
+- Scrolling.
+- Dragging sliders.
+- Editing text.
+- Assigning keybinds.
+- Opening and closing panels.
+- Search filtering.
+- Responsive resizing where supported.
+
+Prevent input conflicts between the GUI and the game. Do not allow GUI interactions to unintentionally trigger gameplay actions.
+
+All visible controls must perform their advertised functions.
+
+The GUI must display real module and setting state. Do not use decorative controls that are disconnected from the implementation.
+
+### Animation system
+
+Create a reusable animation utility supporting:
+
+- Linear interpolation.
+- Ease-in and ease-out curves.
+- Smooth opacity changes.
+- Position and scale transitions.
+- Hover transitions.
+- Expand and collapse animations.
+
+Animations must be frame-rate independent and must not allocate unnecessary objects every frame.
+
+## 4. SETTINGS AND CONFIGURATION
+
+Implement a typed settings system.
+
+Supported setting types should include:
+
+- Boolean.
+- Integer.
+- Decimal.
+- String.
+- Enumeration.
+- Color.
+- Keybind.
+- Range.
+- Multi-selection, where appropriate.
+
+Each setting must define its identifier, display name, default value, validation rules, and relevant constraints.
+
+### Configuration persistence
+
+Implement:
+
+- Saving settings.
+- Loading settings.
+- Default configuration creation.
+- Resetting settings.
+- Importing configurations.
+- Exporting configurations.
+- Configuration selection.
+- Validation and error reporting.
+
+Configuration files must remain readable and maintainable.
+
+Validate values before applying them. Reject invalid values safely without corrupting valid settings.
+
+Use safe file operations and avoid partially overwriting a valid configuration during failed saves. Prefer temporary files and atomic replacement where supported.
+
+Unknown configuration fields should be handled according to a documented compatibility policy.
+
+Version configuration formats and provide migrations when the schema changes.
+
+Do not silently ignore important configuration errors.
+
+## 5. COMBAT MODULES
+
+Create a combat category for legitimate client-side utilities and features compatible with the target environment.
+
+Possible modules include:
+
+- CPS counter.
+- Attack indicator.
+- Target information display.
+- Combat statistics.
+- Hit feedback.
+- Damage indicator.
+- Attack cooldown display.
+- Combat-related HUD elements.
+- Configurable visual indicators for entities.
+
+Where supported, display information that can be reliably obtained from the local game state.
+
+Every module must have meaningful settings, descriptions, enable and disable behaviour, and clear limitations.
+
+Do not represent client-side information as authoritative server information.
+
+Do not bypass server permissions, anti-cheat systems, or multiplayer restrictions. Do not introduce unexpected network packets or interfere with ordinary multiplayer functionality.
+
+If a proposed feature depends on server-side information that the client cannot access, explain the limitation and implement a safe alternative where possible.
+
+## 6. PLAYER AWARENESS AND ENTITY INFORMATION
+
+Implement player-awareness utilities that present relevant information clearly.
+
+Possible features include:
+
+- Configurable entity highlighting.
+- Entity name labels.
+- Distance indicators.
+- Health displays where available.
+- Entity information overlays.
+- Local player status indicators.
+- Target information panels.
+- Configurable display filters.
+- Visual indicators for entities within a user-defined range.
+
+Provide settings for colors, range, visibility, text size, opacity, and rendering quality where relevant.
+
+Avoid excessive rendering, large unbounded collections, and unnecessary entity scans.
+
+Respect the distinction between information available locally and information that requires server-side access.
+
+Ensure that rendering changes are client-side only unless a separately documented and authorized mechanism exists.
+
+## 7. WORLD RENDERING AND VISUAL EFFECTS
+
+Build a dedicated visual-effects framework for configurable world rendering.
+
+Potential features include:
+
+- Custom skies.
+- Atmospheric color adjustments.
+- Fog customization where supported.
+- Particle effects.
+- Environmental overlays.
+- World color adjustments.
+- Subtle screen effects.
+- Customizable entity and world highlights.
+- Optional visual effects tied to gameplay events.
+
+Every effect must have configurable intensity, visibility, and quality settings where appropriate.
+
+### Bokeh effect
+
+Implement a configurable bokeh effect as a distinct visual module.
+
+Bokeh refers to the aesthetic appearance of out-of-focus light sources and highlights, commonly represented by soft, blurred circles or polygonal highlights.
+
+The effect should support, where technically feasible:
+
+- Adjustable intensity.
+- Highlight size.
+- Blur strength.
+- Density.
+- Color tint.
+- Opacity.
+- Quality presets.
+- Enable and disable controls.
+
+Use an appropriate rendering pipeline for the target Minecraft version.
+
+If the effect requires framebuffers, shaders, or post-processing support, implement the required resources and handle unsupported rendering configurations gracefully.
+
+Do not label a simple collection of unblurred particles as a complete bokeh implementation.
+
+Restore rendering state after drawing, and release GPU resources during resource reloads, world transitions, and module shutdown.
+
+### Eight custom sky presets
+
+Implement eight distinct sky presets:
+
+1. **Clear Day** — bright, clean daytime atmosphere.
+2. **Sunset** — warm orange, pink, and purple tones.
+3. **Night** — dark sky with subtle celestial highlights.
+4. **Galaxy** — deep-space colors with stars and nebula-inspired details.
+5. **Nebula** — colorful atmospheric gradients and soft clouds of color.
+6. **Aurora** — flowing, luminous northern-light-inspired patterns.
+7. **Dream** — soft pastel colors and atmospheric gradients.
+8. **Void** — minimal, dark, high-contrast atmosphere.
+
+Each preset must have a distinct visual identity rather than being a simple recoloring of the same effect.
+
+Where practical, provide settings for:
+
+- Preset selection.
+- Color adjustment.
+- Intensity.
+- Animation speed.
+- Star density.
+- Opacity.
+- Quality.
+- Optional secondary effects.
+
+Use appropriate rendering hooks for the supported Minecraft version. Do not assume that every version exposes identical sky-rendering functionality.
+
+If a preset requires shaders or custom resources, document those dependencies and provide a fallback when the required rendering path is unavailable.
+
+## 8. SPOTIFY INTEGRATION AND LYRICS
+
+Create an optional music integration that displays currently playing track information and synchronized lyrics when supported by the authorized integration.
+
+### Display information
+
+Where available, show:
+
+- Track title.
+- Artist.
+- Album artwork.
+- Playback progress.
+- Current playback status.
+- Synchronized lyrics.
+- A configurable music HUD.
+
+The interface should fit the overall client design and allow users to customize positioning, scale, opacity, and visibility.
+
+### Integration requirements
+
+Use authorized Spotify authentication and supported APIs where applicable.
+
+Do not collect or store account passwords. Do not hardcode client secrets or tokens into source code or configuration files.
+
+Handle expired credentials, unavailable playback information, network failures, rate limits, and missing metadata safely.
+
+Spotify playback metadata and lyrics availability are separate concerns. Do not assume that Spotify provides unrestricted access to full song lyrics or precise lyric timestamps.
+
+Use an authorized lyrics provider or another permitted source if synchronized lyrics are available through that source. Respect licensing, provider terms, and rate limits.
+
+If lyrics cannot be retrieved, display track metadata without lyrics and communicate the limitation appropriately.
+
+Avoid blocking the render thread with network requests. Perform permitted network operations asynchronously and update the HUD safely.
+
+Provide a clear disconnect or disable option.
+
+## 9. COSMETICS AND PLAYER CUSTOMIZATION
+
+Create a cosmetics category for local visual customization.
+
+Possible features include:
+
+- Custom capes where supported by the rendering architecture.
+- Wings or back accessories.
+- Trails.
+- Particle cosmetics.
+- Custom name-tag styling.
+- Local visual effects.
+- Cosmetic color settings.
+- Cosmetic visibility controls.
+- Preset selection.
+
+Cosmetics must have a clear distinction between locally rendered effects and server-recognized or account-associated cosmetics.
+
+Do not claim that a local cape, skin, accessory, or name-tag change is visible to other players unless the relevant server or account system actually supports it.
+
+Use original or appropriately licensed assets. Do not redistribute proprietary cosmetics or impersonate official account entitlements.
+
+Implement resource cleanup and avoid creating excessive cosmetic entities or particles.
+
+## 10. HUD AND OVERLAYS
+
+Implement a modular HUD system with configurable elements.
+
+Potential elements include:
+
+- FPS counter.
+- Coordinates.
+- Direction indicator.
+- CPS counter.
+- Keystrokes.
+- Armor status.
+- Potion effects.
+- Target information.
+- Module status.
+- Clock.
+- Session information.
+- Music player.
+- Lyrics display.
+- Custom text.
+- Watermark or client branding.
+
+Each HUD element should support appropriate settings for:
+
+- Visibility.
+- Position.
+- Scale.
+- Color.
+- Opacity.
+- Background.
+- Text size.
+- Alignment.
+- Update frequency.
+
+Where practical, support drag-to-position editing in a HUD editor.
+
+Avoid unnecessary updates for values that have not changed. Cache expensive calculations and use a consistent rendering abstraction.
+
+HUD elements must not overlap unexpectedly when their positions can be configured independently. Provide sensible defaults and an option to reset layout settings.
+
+Do not expose sensitive authentication information in the HUD or diagnostic logs.
+
+## 11. UTILITIES, INPUT, AND QUALITY-OF-LIFE FEATURES
+
+Create a utility category for general client functionality.
+
+Possible features include:
+
+- Module toggle keybinds.
+- Configurable keybind handling.
+- Notifications.
+- Session statistics.
+- Coordinate utilities.
+- Lightweight status indicators.
+- Configuration shortcuts.
+- HUD editing controls.
+- Debug information.
+- Error notifications.
+- Resource diagnostics.
+
+Provide a centralized keybind manager that detects conflicts and handles reassignment predictably.
+
+Do not process the same input multiple times through separate handlers.
+
+Avoid blocking the main game thread for file access, network requests, or other potentially expensive operations.
+
+All utility modules must have clear descriptions and predictable behaviour.
+
+## 12. DEVELOPMENT WORKFLOW AND IMPLEMENTATION
+
+Work incrementally and maintain a buildable project.
+
+### Stage 1 — Requirements and environment
+
+- Confirm the target Minecraft version.
+- Confirm Java compatibility.
+- Select compatible Fabric dependencies.
+- Define the module architecture.
+- Establish the project directory structure.
+- Document rendering and API constraints.
+
+### Stage 2 — Core framework
+
+Implement:
+
+- Client initialization.
+- Module base class.
+- Module registry.
+- Typed settings.
+- Keybind manager.
+- Configuration persistence.
+- Logging.
+- Lifecycle management.
+
+Verify the core framework before introducing complex rendering features.
+
+### Stage 3 — GUI and HUD
+
+Implement:
+
+- ClickGUI.
+- Category navigation.
+- Module controls.
+- Setting editors.
+- Search.
+- Animations.
+- HUD framework.
+- HUD positioning.
+
+Test input handling and state synchronization.
+
+### Stage 4 — Gameplay utilities
+
+Implement combat information, player-awareness modules, and quality-of-life features that are supported by the target environment.
+
+Verify that modules can be enabled, disabled, configured, and persisted correctly.
+
+### Stage 5 — Rendering effects
+
+Implement sky presets, bokeh, world effects, and other rendering modules incrementally.
+
+Test rendering state restoration, resource cleanup, and compatibility with the supported rendering configuration.
+
+### Stage 6 — External integrations and cosmetics
+
+Implement music metadata, permitted lyrics integration, and cosmetic rendering.
+
+Keep external integrations optional and ensure that their failure does not prevent the core client from launching.
+
+### Stage 7 — Integration and release preparation
+
+- Run compilation and automated tests.
+- Resolve build errors.
+- Test the complete GUI workflow.
+- Test configuration persistence across restarts.
+- Test supported rendering environments.
+- Profile expensive effects.
+- Review dependencies and security.
+- Document installation and known limitations.
+
+Do not claim that code has been compiled, executed, or tested unless those actions have actually occurred.
+
+## 13. EXPECTED DELIVERABLES AND RESPONSE FORMAT
+
+Provide a complete, organized project rather than disconnected snippets.
+
+Deliverables should include:
+
+1. Project directory structure.
+2. Gradle build files.
+3. Fabric metadata and entry points.
+4. Java source files.
+5. Mixins and configuration where required.
+6. GUI implementation.
+7. Module framework.
+8. Settings and persistence system.
+9. HUD framework.
+10. Rendering effects and resource files.
+11. External integration components.
+12. Automated tests.
+13. Installation instructions.
+14. Build and launch commands.
+15. Supported dependency versions.
+16. Known limitations and unresolved issues.
+
+When generating files, provide their complete contents and correct paths. Ensure that imports, package declarations, identifiers, and dependencies are consistent across the project.
+
+Do not leave critical methods as empty placeholders, use pseudocode while claiming a feature is complete, or reference classes that do not exist.
+
+If the full project cannot reasonably be produced in one response, implement it in coherent stages. Identify which files are complete, which features remain, and what should be implemented next.
+
+Prefer working implementations over excessive scaffolding. Prioritize the core framework, configuration system, GUI, and reliable build before advanced visual effects.
+
+Maintain a clear distinction between proposed, implemented, compiled, and tested functionality.
+
+## 14. REALISTIC DEVELOPMENT AND QUALITY CONTROL
+
+Follow a disciplined software development process.
+
+### Stage 1 — Requirements and feasibility
+
+Before implementing a feature, define its purpose, expected behavior, dependencies, rendering requirements, and technical limitations.
+
+Verify that the requested functionality is feasible for the selected Minecraft version, Fabric APIs, and supported rendering environment.
+
+Identify any feature that requires unavailable APIs, external services, unsupported shaders, server cooperation, or additional permissions.
+
+Do not promise unsupported functionality.
+
+### Stage 2 — Architecture and planning
+
+Design the required classes, interfaces, module lifecycle, settings, configuration format, and resource ownership before implementation.
+
+Keep responsibilities separated and reuse established abstractions.
+
+Avoid duplicated code, oversized classes, circular dependencies, unnecessary mixins, and premature optimization.
+
+### Stage 3 — Incremental implementation
+
+Implement one coherent feature or subsystem at a time.
+
+For each stage:
+
+1. Identify the files to create or modify.
+2. Implement the required functionality.
+3. Verify imports, types, method signatures, and dependency compatibility.
+4. Run the applicable build and tests.
+5. Fix identified errors.
+6. Record the implementation status and remaining limitations.
+
+Do not build large collections of interdependent features without intermediate verification.
+
+### Stage 4 — Integration
+
+Verify that the new implementation integrates correctly with existing modules, GUI components, settings, keybinds, configuration persistence, and rendering systems.
+
+Check that module registration occurs once and that module state remains consistent between the GUI, keybind manager, and configuration system.
+
+Ensure that failure in an optional feature does not unnecessarily disable unrelated functionality.
+
+### Stage 5 — Verification
+
+Test both normal behavior and failure cases.
+
+Where relevant, verify:
+
+- Valid and invalid configuration files.
+- Missing resources.
+- Duplicate module identifiers.
+- Conflicting keybinds.
+- Disabled modules.
+- World changes.
+- Resource reloads.
+- GUI opening and closing.
+- Shader compilation failures.
+- Unsupported rendering features.
+- External integration failures.
+- Cleanup after exceptions.
+
+Distinguish static code inspection from compilation, automated tests, and actual in-game testing.
+
+### Stage 6 — Optimization
+
+Measure performance before making claims about efficiency.
+
+Profile rendering, entity iteration, configuration operations, animation updates, and external integrations where relevant.
+
+Reduce unnecessary allocations, repeated resource creation, redundant calculations, and expensive operations on the main game thread.
+
+Use caching only where it improves measured performance without introducing stale data or excessive complexity.
+
+### Stage 7 — Final review
+
+Review the completed implementation for correctness, maintainability, security, resource cleanup, dependency compatibility, and documentation.
+
+Report the exact build and test results available in the environment.
+
+Identify untested behavior and known issues explicitly.
+
+### Mandatory development rules
+
+- Never claim that a feature works merely because its code has been written.
+- Never claim that the project compiles unless a build has actually completed successfully.
+- Never claim that an in-game feature has been tested unless it has been exercised in the game.
+- Never hide compiler errors, failing tests, missing dependencies, or unresolved implementation gaps.
+- Never replace a required implementation with a placeholder without clearly identifying it.
+- Never invent test results, performance measurements, compatibility claims, or build logs.
+- Keep the project buildable after each significant implementation stage whenever practical.
+- Prefer small, verifiable changes over large, unverified rewrites.
+- When blocked, explain the precise cause, its impact, and the next feasible action.
+- Preserve existing working functionality when modifying the project.
+
+## 15. PROFESSIONAL TESTING, PERFORMANCE, AND SECURITY
+
+### Automated Testing
+
+- Create automated unit tests for module registration, typed settings, configuration serialization, keybind conflicts, and data validation.
+- Add integration tests for configuration loading, saving, importing, and exporting.
+- Run Gradle compilation and tests after every significant implementation stage.
+- Fix all identified errors before marking a stage complete.
+
+### Performance Targets
+
+- Aim for minimal overhead when modules are disabled.
+- Target less than 1 ms of additional CPU time per frame for lightweight HUD and module-management operations on the defined reference system.
+- Profile expensive rendering effects and provide Low, Medium, and High quality presets.
+- Avoid unnecessary allocations, repeated resource creation, blocking operations, and unbounded particle collections.
+- Measure actual frame times and memory usage; never claim performance targets have been achieved without measurements.
+
+### Crash Recovery and Reliability
+
+- Handle malformed configuration files, missing resources, shader compilation failures, and unsupported rendering features safely.
+- Preserve valid settings when configuration loading fails.
+- Restore rendering state, camera state, and temporary modifications when modules disable or errors occur.
+- Release GPU resources correctly during world changes, screen changes, and resource reloads.
+- Log actionable error messages without flooding the log.
+
+### Multiplayer Compatibility
+
+- Test in single-player and on compatible multiplayer servers.
+- Verify behaviour with supported Fabric API versions and test Sodium and Iris separately where feasible.
+- Respect server authority: client-side visuals must never be described as server-side changes.
+- Avoid sending unexpected packets, bypassing server permissions, or interfering with normal multiplayer functionality.
+- Document server-specific restrictions and features that cannot be reliably detected from client-visible information.
+
+### Security
+
+- Validate imported configuration files and reject invalid values, excessive data, and unsafe resource references.
+- Never store account passwords, OAuth client secrets, or access tokens in plaintext configuration files.
+- Use authorised authentication flows for external integrations and handle expired credentials securely.
+- Do not download or execute untrusted code or configuration-supplied scripts.
+- Keep dependencies version-pinned where practical and document known security concerns.
+
+### Verification Standard
+
+Every feature must have:
+
+1. A defined expected behaviour and acceptance criteria.
+2. A documented implementation and its dependencies.
+3. A reproducible test procedure.
+4. Recorded test results and known limitations.
+5. A truthful status: IMPLEMENTED AND TESTED, IMPLEMENTED BUT NOT TESTED, PARTIALLY IMPLEMENTED, or NOT IMPLEMENTED.
+
+Never mark a feature as tested merely because the project compiles.
+
+### Final Release Gate
+
+Before release, verify that the client builds successfully, launches without fatal errors, opens and closes the ClickGUI, responds to inputs, persists settings across restarts, and cleans up resources correctly.
+
+Provide build logs or test summaries where available, a list of known issues, exact supported dependency versions, and installation instructions.
+
+If a requirement cannot be tested in the available environment, explicitly identify it as unverified rather than claiming success.
+
+## FINAL EXECUTION INSTRUCTIONS
+
+Begin by establishing the target Minecraft version, Java version, Fabric Loader version, Fabric API version, and rendering compatibility requirements.
+
+Then produce the project structure and implement the core framework first.
+
+Build the client incrementally, prioritizing functional code, coherent architecture, reliable configuration persistence, and a working GUI before advanced effects.
+
+For each implementation stage, report:
+
+- What was implemented.
+- Which files were created or modified.
+- Which commands were run.
+- Actual build and test results.
+- Known limitations.
+- What remains to be completed.
+
+Use real implementations wherever feasible. Clearly label anything that remains incomplete or unverified.
+
+The final objective is a maintainable, visually polished, reliable Minecraft client with a functional ClickGUI, modular features, configurable world effects, eight sky presets, a properly defined bokeh effect, optional authorized Spotify and lyrics integration, cosmetics, HUD customization, and professional testing and release practices.
